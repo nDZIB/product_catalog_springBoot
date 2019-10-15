@@ -43,7 +43,7 @@ public class CategoryController {
 	}
 	
 	@DeleteMapping("/{categoryid}") 
-	public ResponseEntity<Object> deleteProductWithId(@PathVariable("categoryid") long categoryid) {
+	public ResponseEntity<Object> deleteCategoryWithId(@PathVariable("categoryid") long categoryid) {
 		
 		service.deleteCategoryWithId(categoryid);
 		
@@ -51,7 +51,7 @@ public class CategoryController {
 	}
 	
 	@PostMapping("/")
-	public ResponseEntity<CategoryDTO> addNewProduct(@RequestBody Category category) {
+	public ResponseEntity<CategoryDTO> addNewCategory(@RequestBody Category category) {
 		
 		return new ResponseEntity<CategoryDTO>(service.addCategory(category), HttpStatus.CREATED);
 	}
