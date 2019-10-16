@@ -2,6 +2,7 @@ package com.productservice.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.productservice.model.Product;
+import com.productservice.proxy.CategoryFeignProxy;
 import com.productservice.service.ProductDTO;
 import com.productservice.service.ProductServiceImpl;
 
@@ -23,6 +25,7 @@ public class ProductController {
 	
 	private ProductServiceImpl service;
 	
+	@Autowired
 	public ProductController(ProductServiceImpl service) {
 		this.service = service;
 	}
@@ -32,7 +35,6 @@ public class ProductController {
 		
 		return new ResponseEntity<List<ProductDTO>>(service.getAllProducts(), HttpStatus.OK);
 	}
-	
 	
 	@GetMapping("/{productid}")
 	public ResponseEntity<ProductDTO> getSingleProduct(@PathVariable("productid") long productid) {
@@ -45,17 +47,24 @@ public class ProductController {
 		service.deleteProductById(productid);
 	}
 	
-	@PostMapping("/category/{categoryid}")
-	public ResponseEntity<ProductDTO> addNewProduct(@PathVariable("categoryid") long categoryid, 
-			@RequestBody Product product) {
-		
-		return new ResponseEntity<ProductDTO>(service.saveProduct(product, categoryid), HttpStatus.CREATED);
-	}
+//	@PostMapping("/category/{categoryid}")
+//	public ResponseEntity<ProductDTO> addNewProduct(@PathVariable("categoryid") long categoryid, 
+//			@RequestBody Product product) {
+//		
+//		return new ResponseEntity<ProductDTO>(service.saveProduct(product, categoryid), HttpStatus.CREATED);
+//	}
 	
 	@PutMapping("/{productid}/category/{categoryid}")
 	public ResponseEntity<ProductDTO> modifyExistingProduct(@PathVariable("productid") long productid,
 			@PathVariable("categoryid") long categoryid, @RequestBody Product product) {
 	
 		return new ResponseEntity<ProductDTO>(service.modifyProduct(product, productid, categoryid), HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/category/{categoryid}")
+	public ResponseEntity<ProductDTO> addProduct(@PathVariable("categoryid") long categoryid, 
+			@RequestBody Product product) {
+		
+		return new ResponseEntity<ProductDTO>(service.createNewProduct(product, categoryid), HttpStatus.CREATED);
 	}
 }

@@ -7,14 +7,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.productservice.model.Product;
+import com.productservice.proxy.CategoryFeignProxy;
 
 @Service
 public class ProductServiceImpl  implements ProductService{
 
 	private ProductRespository productRepository;
+	private CategoryFeignProxy categoryProxy;
 	
-	public ProductServiceImpl(ProductRespository productRepository) {
+	public ProductServiceImpl(ProductRespository productRepository, CategoryFeignProxy categoryProxy) {
 		this.productRepository = productRepository;
+		this.categoryProxy = categoryProxy;
 	}
 	
 	
@@ -23,46 +26,83 @@ public class ProductServiceImpl  implements ProductService{
 		
 		List<ProductDTO> rawList = new ArrayList<ProductDTO>();
 		productRepository.findAll()
-				.forEach(product -> rawList.add(product.toDTO()));
-		
+				.forEach(product -> {
+					ProductDTO result = product.toDTO();
+					result.setCategory(categoryProxy.getSingleCategory(product.getCategoryId()).getBody());
+					rawList.add(result);
+				});
 		return rawList;
 	}
 
 
+	@Override
 	public ProductDTO getProductWithId(long productid) {
-		return productRepository.findById(productid).get().toDTO();
+		Product product = productRepository.findById(productid).get();
+		ProductDTO result = product.toDTO();
+		
+		System.out.println(product.getCategoryId());
+		result.setCategory(categoryProxy.getSingleCategory(product.getCategoryId()).getBody());
+		
+		return result;
 	}
 
 
+	@Override
 	public void deleteProductById(long productid) {
 		
 		productRepository.deleteById(productid);
 	}
 
 
+	@Override
 	public ProductDTO saveProduct(Product product, long categoryid) {
 		
-		//verify that the specified category exists by calling the category api
-		//if exists, set the category id for the product
-		product.setCategoryId(categoryid);
-		
-		//if category is not found, exception is thrown from category service
-		return productRepository.save(product).toDTO();
+//		//verify that the specified category exists by calling the category api
+//		//if exists, set the category id for the product
+//		product.setCategoryId(categoryid);
+//		
+//		//if category is not found, exception is thrown from category service
+//		return productRepository.save(product).toDTO();
+		return null;
 	}
 
 
+	@Override
 	public ProductDTO modifyProduct(Product product, long productid, long categoryid) {
 		
 		if(productRepository.existsById(productid)) {
-			//verify that the category as well exists
-				//then save the product
-			product.setId(productid);
-			product.setCategoryId(categoryid);
 			
-			return productRepository.save(product).toDTO();
+			//verify that the category as well exists
+			Category category = categoryProxy.getSingleCategory(categoryid).getBody();
+			if(category == null) {
+				//throw an exception
+			}
+				//then save the product if the category exists
+			product.setId(productid);
+			product.setCategoryId(category.getId());
+			
+			ProductDTO result = productRepository.save(product).toDTO();
+			result.setCategory(category);
+			return result;
 		}
 		//if not found, throw exception
 		return null;
+	}
+
+
+	@Override
+	public ProductDTO createNewProduct(Product product, long categoryid) {
+	Category category = categoryProxy.getSingleCategory(categoryid).getBody();
+		
+		if (category == null) {
+			//throw exception
+		} 
+		
+		product.setCategoryId(category.getId());
+		
+		ProductDTO result = productRepository.save(product).toDTO();
+		result.setCategory(category);
+		return result;
 	}
 
 }

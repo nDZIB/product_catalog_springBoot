@@ -8,17 +8,17 @@ long id;
 
 	private long price;
 	private int quantity;
-	private long categoryId;
-	
-	
-	public long getCategoryId() {
-		return categoryId;
-	}
-
-
-	public void setCategoryId(long categoryId) {
-		this.categoryId = categoryId;
-	}
+//	private long categoryId;
+//	
+//	
+//	public long getCategoryId() {
+//		return categoryId;
+//	}
+//
+//
+//	public void setCategoryId(long categoryId) {
+//		this.categoryId = categoryId;
+//	}
 
 
 	private Category category;
