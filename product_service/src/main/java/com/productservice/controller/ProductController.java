@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.productservice.model.Product;
 import com.productservice.proxy.CategoryFeignProxy;
 import com.productservice.service.ProductDTO;
@@ -47,12 +48,10 @@ public class ProductController {
 		service.deleteProductById(productid);
 	}
 	
-//	@PostMapping("/category/{categoryid}")
-//	public ResponseEntity<ProductDTO> addNewProduct(@PathVariable("categoryid") long categoryid, 
-//			@RequestBody Product product) {
-//		
-//		return new ResponseEntity<ProductDTO>(service.saveProduct(product, categoryid), HttpStatus.CREATED);
-//	}
+	@DeleteMapping("/categories/{categoryid}") 
+	public void deleteCategoryProduct(@PathVariable("categoryid") long categoryid) {
+		service.deleteProductByCategoryId(categoryid);
+	}
 	
 	@PutMapping("/{productid}/category/{categoryid}")
 	public ResponseEntity<ProductDTO> modifyExistingProduct(@PathVariable("productid") long productid,

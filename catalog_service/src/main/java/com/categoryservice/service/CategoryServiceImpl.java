@@ -8,15 +8,18 @@ import org.springframework.stereotype.Service;
 
 import com.categoryservice.model.Category;
 import com.categoryservice.model.repository.CategoryRepository;
+import com.categoryservice.service.proxy.ProductServiceProxy;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
 
 	private CategoryRepository categoryRepository;
+	private ProductServiceProxy productProxy;
 	
 	@Autowired
-	public CategoryServiceImpl(CategoryRepository categoryRepository) {
+	public CategoryServiceImpl(CategoryRepository categoryRepository, ProductServiceProxy productProxy) {
 		this.categoryRepository = categoryRepository;
+		this.productProxy = productProxy;
 	}
 	
 	@Override
@@ -36,6 +39,12 @@ public class CategoryServiceImpl implements CategoryService{
 
 	@Override
 	public void deleteCategoryWithId(long categoryid) {
+		
+		if(categoryRepository.existsById(categoryid)) {
+			productProxy.deleteCategoryProduct(categoryid);
+			//then delete category
+		}
+		//otherwise throw exception
 		
 		categoryRepository.deleteById(categoryid);
 	}

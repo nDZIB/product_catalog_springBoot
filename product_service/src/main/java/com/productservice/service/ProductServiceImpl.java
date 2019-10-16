@@ -40,7 +40,6 @@ public class ProductServiceImpl  implements ProductService{
 		Product product = productRepository.findById(productid).get();
 		ProductDTO result = product.toDTO();
 		
-		System.out.println(product.getCategoryId());
 		result.setCategory(categoryProxy.getSingleCategory(product.getCategoryId()).getBody());
 		
 		return result;
@@ -103,6 +102,16 @@ public class ProductServiceImpl  implements ProductService{
 		ProductDTO result = productRepository.save(product).toDTO();
 		result.setCategory(category);
 		return result;
+	}
+
+
+	@Override
+	public void deleteProductByCategoryId(long categoryid) {
+		List<Product> products = productRepository.findByCategoryId(categoryid);
+		
+		products.forEach(product -> {
+			productRepository.deleteById(product.getId());
+		});
 	}
 
 }

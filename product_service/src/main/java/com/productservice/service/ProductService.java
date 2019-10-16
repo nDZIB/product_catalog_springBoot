@@ -18,4 +18,6 @@ public interface ProductService {
 
 	ProductDTO modifyProduct(Product product, long productid, long categoryid);
 
+	void deleteProductByCategoryId(long categoryid);
+
 }
