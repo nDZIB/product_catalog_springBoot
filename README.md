@@ -32,4 +32,4 @@ The major microservices are each provided with swagger documentation (which prov
 	
 	
 ##### Note
-	*All microservices makes use of the h2 database (spring boot's in-memory database)
+	*All microservices make use of the h2 database (spring boot's in-memory database)
